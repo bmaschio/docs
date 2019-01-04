@@ -88,7 +88,7 @@ type GetAddressResponse: void {
 
 interface MyServiceInterface {
 RequestResponse:
-    getAddress( GetAddressRequest )( GetAddressResponse ) 
+    getAddress( GetAddressRequest )( GetAddressResponse )
         throws NameDoesNotExist( FaultType )
 }
 
@@ -128,7 +128,7 @@ To expose the port `MyServiceSOAPPort` as a web service, we exploit the tool [jo
 
 Once generated the WSDL file is to be attached within the declaration of the inputPort:
 
-```text
+```jolie
 inputPort MyServiceSOAPPort {
     Location: "socket://localhost:8001"
     Protocol: soap {
@@ -138,4 +138,3 @@ inputPort MyServiceSOAPPort {
     Interfaces: MyServiceInterface
 }
 ```
-
