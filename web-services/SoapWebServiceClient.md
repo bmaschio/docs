@@ -1,10 +1,12 @@
-# WSDL2jolie
+# Consume a SOAP WebSevice 
+This page will walk you you through the process of consuming a SOAP-based web service with Jolie.
 
 ## Web services
 
 Interacting with Web Services usually implies reading some WSDL \(Web Service Description Language\) document. Unfortunately, WSDL documents are written in XML and can be pretty complicated, leaving the user with no other choice than to use some graphical development tool in order to understand them.
 
-Jolie supports the SOAP protocol, but using it means manually coding the interface and data types of the Web Service to invoke.
+Jolie supports the SOAP protocol, and it also provides the programmer with _wsdl2jolie_ a tool to import the complex structure of a WSDL
+into a Jolie interface
 
 _wsdl2jolie_ \(whose executable is installed by default in Jolie standard trunk\) is a tool that takes a URL to a WSDL document and automatically downloads all the related files \(e.g., referred XML schemas\), parses them and outputs the corresponding Jolie port/interface/data type definitions.
 
@@ -22,64 +24,60 @@ The output the tool returns is a set of service declarations \(in Jolie\) needed
 
 ## Wsdl2jolie example
 
-Let us consider an example of a WSDL document for a service that calculates prime numbers, the WSDL URL is `http://www50.brinkster.com/vbfacileinpt/np.asmx?wsdl`.
+Let us consider an example of a WSDL document for a service that validates the ISBN number, the WSDL URL is `http://webservices.daehosting.com/services/isbnservice.wso?WSDL`.
 
 Reading the raw XML is not so easy, or at least requires some time.
 
-If we execute the command `wsdl2jolie http://www50.brinkster.com/vbfacileinpt/np.asmx?wsdl` our output will be
+If we execute the command `wsdl2jolie http://webservices.daehosting.com/services/isbnservice.wso?WSDL` our output will be
 
-```text
-Retrieving document at 'http://www50.brinkster.com/vbfacileinpt/np.asmx?wsdl'.
-type GetPrimeNumbersResponse:void {
-    .GetPrimeNumbersResult?:string
+```jolie
+Retrieving document at 'http://webservices.daehosting.com/services/isbnservice.wso?WSDL'.
+type NOTATIONType:any
+
+type IsValidISBN13Response:void {
+        .IsValidISBN13Result:bool
 }
 
-type GetPrimeNumbers:void {
-    .max:int
+type IsValidISBN13:void {
+        .sISBN:string
 }
 
-interface PrimeNumbersHttpPost {
+type IsValidISBN10Response:void {
+        .IsValidISBN10Result:bool
+}
+
+type IsValidISBN10:void {
+        .sISBN:string
+}
+
+interface ISBNServiceSoapType {
 RequestResponse:
-    GetPrimeNumbers(string)(string)
+        IsValidISBN13(IsValidISBN13)(IsValidISBN13Response),
+        IsValidISBN10(IsValidISBN10)(IsValidISBN10Response)
 }
 
-interface PrimeNumbersHttpGet {
-RequestResponse:
-    GetPrimeNumbers(string)(string)
+outputPort ISBNServiceSoap {
+Location: "socket://webservices.daehosting.com:80/services/isbnservice.wso"
+Protocol: soap {
+        .wsdl = "http://webservices.daehosting.com/services/isbnservice.wso?WSDL";
+        .wsdl.port = "ISBNServiceSoap"
+}
+Interfaces: ISBNServiceSoapType
 }
 
-interface PrimeNumbersSoap {
-RequestResponse:
-    GetPrimeNumbers(GetPrimeNumbers)(GetPrimeNumbersResponse)
+outputPort ISBNServiceSoap12 {
+Location: "socket://localhost:80/"
+Protocol: soap
+Interfaces: ISBNServiceSoapType
 }
 
-outputPort PrimeNumbersHttpPost {
-    Location: "socket://www50.brinkster.com:80/vbfacileinpt/np.asmx"
-    Protocol: http
-    Interfaces: PrimeNumbersHttpPost
-}
-
-outputPort PrimeNumbersHttpGet {
-    Location: "socket://www50.brinkster.com:80/vbfacileinpt/np.asmx"
-    Protocol: http
-    Interfaces: PrimeNumbersHttpGet
-}
-
-outputPort PrimeNumbersSoap {
-    Location: "socket://www50.brinkster.com:80/vbfacileinpt/np.asmx"
-    Protocol: soap {
-            .wsdl = "http://www50.brinkster.com/vbfacileinpt/np.asmx?wsdl";
-            .wsdl.port = "PrimeNumbersSoap"
-    }
-    Interfaces: PrimeNumbersSoap
-}
 ```
 
 which is the Jolie equivalent of the WSDL document. Those `.wsdl` and `.wsdl.port` parameters are improvement to the SOAP protocol: when the output port is used for the first time, Jolie will read the WSDL document for processing information about the correct configuration for interacting with the service instead of forcing the user to manually insert it.
 
 Once our interface is created, we can store it into a file, e.g., PrimeNumbers.iol, and use the output ports we discovered from Jolie code. As in the following:
 
-```text
+```jolie
 include "PrimeNumbers.iol"
 include "console.iol"
 
