@@ -3,16 +3,13 @@ This page will walk you you through the process of consuming a SOAP-based web se
 
 ## Web services
 
-Interacting with Web Services usually implies reading some WSDL \(Web Service Description Language\) document. Unfortunately, WSDL documents are written in XML and can be pretty complicated, leaving the user with no other choice than to use some graphical development tool in order to understand them.
-
-Jolie supports the SOAP protocol, and it also provides the programmer with _wsdl2jolie_ a tool to import the complex structure of a WSDL
-into a Jolie interface
+Interacting with Web Services usually implies reading some WSDL \(Web Service Description Language\) document. The WSDL documents are written in XML and can result complex to read and decode. Like other languages Jolie has its own tool to import  the complex structures of a WSDL into a more friendly Jolie interface.
 
 _wsdl2jolie_ \(whose executable is installed by default in Jolie standard trunk\) is a tool that takes a URL to a WSDL document and automatically downloads all the related files \(e.g., referred XML schemas\), parses them and outputs the corresponding Jolie port/interface/data type definitions.
 
-## The syntax
+## Using wsdl2jolie
 
-The syntax of wsdl2jolie follows:
+_jolie2wsdl_ can be executed from console with the following syntax
 
 ```text
 wsdl2jolie wsdl_uri
@@ -20,15 +17,15 @@ wsdl2jolie wsdl_uri
 
 `wdsl_uri` can be a URL or a file path \(in case of local usage\).
 
-The output the tool returns is a set of service declarations \(in Jolie\) needed for invoking the web service.
+The output \(on screen\)  the tool returns is a set of service declarations \(in Jolie\) needed for invoking the web service.
 
-## Wsdl2jolie example
+## Full example
 
-Let us consider an example of a WSDL document for a service that validates the ISBN number, the WSDL URL is `http://webservices.daehosting.com/services/isbnservice.wso?WSDL`.
+Let us an example of a WSDL document for a service that validates the ISBN number, the WSDL URL is `http://webservices.daehosting.com/services/isbnservice.wso?WSDL`.
 
-Reading the raw XML is not so easy, or at least requires some time.
+Now following the _wsdl2jolie_ syntax we can execute the following command
 
-If we execute the command `wsdl2jolie http://webservices.daehosting.com/services/isbnservice.wso?WSDL` our output will be
+                `wsdl2jolie http://webservices.daehosting.com/services/isbnservice.wso?WSDL` 
 
 ```jolie
 Retrieving document at 'http://webservices.daehosting.com/services/isbnservice.wso?WSDL'.
