@@ -17,7 +17,7 @@ wsdl2jolie wsdl_uri
 
 `wdsl_uri` can be a URL or a file path \(in case of local usage\).
 
-The output \(on screen\)  the tool returns is a set of service declarations \(in Jolie\) needed for invoking the web service.
+The output \(on screen\)  the tool returns is a set of service declarations \(in Jolie\) needed for invoking the web service , that can be copied and pasted to any Jolie code. 
 
 ## Full example
 
@@ -70,7 +70,19 @@ Interfaces: ISBNServiceSoapType
 
 ```
 
-which is the Jolie equivalent of the WSDL document. Those `.wsdl` and `.wsdl.port` parameters are improvement to the SOAP protocol: when the output port is used for the first time, Jolie will read the WSDL document for processing information about the correct configuration for interacting with the service instead of forcing the user to manually insert it.
+The resulting output  is the Jolie equivalent of the WSDL document. The WSDL to Jolie interface trasformation has the following mapping
+
+| WSDL | Jolie |
+| :--- | :--- |
+| `<types>` | `type` |
+| `<messages>` | `type` |
+| `<portType>` | `interface` |
+| `<binding>` | `outputPort:Protocol` |
+| `<service:port>` | `outputPort` |
+ 
+ 
+
+Those `.wsdl` and `.wsdl.port` parameters are improvement to the SOAP protocol: when the output port is used for the first time, Jolie will read the WSDL document for processing information about the correct configuration for interacting with the service instead of forcing the user to manually insert it.
 
 Once our interface is created, we can store it into a file, e.g., PrimeNumbers.iol, and use the output ports we discovered from Jolie code. As in the following:
 
